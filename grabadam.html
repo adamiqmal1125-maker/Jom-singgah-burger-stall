@@ -1,0 +1,160 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Jom Singgah Burger Stall</title>
+<style>
+body { margin:0; font-family:sans-serif; background:#fdf6e3; }
+header { background:#ff6f61; color:white; padding:20px; text-align:center; font-size:28px; font-weight:bold; box-shadow:0 4px 6px rgba(0,0,0,0.2);}
+.container { display:flex; flex-wrap:wrap; padding:20px; gap:20px; }
+.menu { flex:2; display:grid; grid-template-columns:repeat(auto-fit,minmax(180px,1fr)); gap:20px; }
+.card { background:white; padding:10px; border-radius:15px; text-align:center; box-shadow:0 4px 8px rgba(0,0,0,0.2); transition: transform 0.2s; }
+.card:hover { transform: translateY(-5px); }
+.card h3 { margin:10px 0 5px 0; color:#333; }
+.card p { margin:5px 0; font-weight:bold; color:#ff6f61; }
+.card select, .card label { margin-top:5px; display:block; }
+.card input[type="checkbox"] { margin-right:5px; }
+.card button { margin-top:10px; padding:5px 10px; background:#ff6f61; color:white; border:none; border-radius:5px; cursor:pointer; transition: background 0.2s; }
+.card button:hover { background:#ff3b2e; }
+.cart { flex:1; background:white; padding:15px; border-radius:15px; height:max-content; box-shadow:0 4px 8px rgba(0,0,0,0.2); min-width:250px; }
+.cart h2 { text-align:center; margin-bottom:15px; }
+.cart ul { list-style:none; padding:0; max-height:300px; overflow-y:auto; }
+.cart li { display:flex; justify-content:space-between; margin-bottom:10px; background:#f9f9f9; padding:5px 8px; border-radius:8px; }
+.cart button { background:#ff6f61; color:white; border:none; border-radius:5px; cursor:pointer; padding:2px 5px; }
+#total { font-weight:bold; text-align:right; margin-top:10px; font-size:18px; }
+.order-btn { width:100%; padding:10px; background:#28a745; color:white; border:none; border-radius:10px; cursor:pointer; margin-top:10px; font-size:16px; transition: background 0.2s; }
+.order-btn:hover { background:#1fa63a; }
+</style>
+</head>
+<body>
+
+<header>Jom Singgah Burger Stall</header>
+<div class="container">
+  <div class="menu" id="menu"></div>
+  <div class="cart">
+    <h2>Cart</h2>
+    <ul id="cartList"></ul>
+    <div id="total">Total: RM0.00</div>
+    <button class="order-btn" onclick="order()">Order Now</button>
+  </div>
+</div>
+
+<audio id="clickSound">
+  <source src="https://www.soundjay.com/button/beep-07.wav" type="audio/wav">
+</audio>
+
+<script>
+const foodItems = [
+  {id:1, name:"Burger Ayam", price:3.5, addonType:"cheeseOnly"},
+  {id:2, name:"Burger Daging", price:3.5, addonType:"cheeseOnly"},
+  {id:3, name:"Burger Ayam Special", price:4.5, addonType:"cheeseOnly"},
+  {id:4, name:"Burger Daging Special", price:4.5, addonType:"cheeseOnly"},
+  {id:5, name:"Burger Ayam Double", price:4.5, addonType:"cheeseOnly"},
+  {id:6, name:"Burger Daging Double", price:4.5, addonType:"cheeseOnly"},
+  {id:7, name:"Burger Ayam Double Special", price:5.5, addonType:"cheeseOnly"},
+  {id:8, name:"Burger Daging Double Special", price:5.5, addonType:"cheeseOnly"},
+  {id:9, name:"Roti John Ayam", price:7, addonType:"checkbox"},
+  {id:10, name:"Roti John Daging", price:7, addonType:"checkbox"}
+];
+
+const addOnsCheeseOnly = [
+  {name:"None", price:0},
+  {name:"Cheese", price:1}
+];
+
+const addOnsCheckbox = [
+  {name:"Cheese", price:1.5},
+  {name:"Daging", price:1}
+];
+
+const menuDiv = document.getElementById("menu");
+const cartList = document.getElementById("cartList");
+const totalDiv = document.getElementById("total");
+const clickSound = document.getElementById("clickSound");
+let cart = [];
+
+foodItems.forEach(item=>{
+  const card = document.createElement('div');
+  card.className='card';
+  let addonHtml = '';
+
+  if(item.addonType==="cheeseOnly"){
+    addonHtml = '<select>';
+    addOnsCheeseOnly.forEach(a=>{
+      addonHtml += `<option value="${a.name}" data-price="${a.price}">${a.name}${a.price>0?` +RM${a.price}`:''}</option>`;
+    });
+    addonHtml += '</select>';
+  } else if(item.addonType==="checkbox"){
+    addOnsCheckbox.forEach(a=>{
+      addonHtml += `<label><input type="checkbox" value="${a.name}" data-price="${a.price}">${a.name} +RM${a.price}</label>`;
+    });
+  }
+
+  card.innerHTML = `
+    <h3>${item.name}</h3>
+    <p>RM${item.price}</p>
+    ${addonHtml}
+    <button onclick="addToCart(${item.id}, this)">Add to Cart</button>
+  `;
+  menuDiv.appendChild(card);
+});
+
+function addToCart(id, btn){
+  clickSound.currentTime = 0;
+  clickSound.play();
+  
+  const item = foodItems.find(f=>f.id===id);
+  let totalPrice = item.price;
+  let addonName = "";
+
+  if(item.addonType==="cheeseOnly"){
+    const select = btn.parentElement.querySelector('select');
+    const selectedOption = select.options[select.selectedIndex];
+    addonName = selectedOption.value!=="None"?selectedOption.value:"";
+    totalPrice += parseFloat(selectedOption.getAttribute('data-price'));
+  } else if(item.addonType==="checkbox"){
+    const checkboxes = btn.parentElement.querySelectorAll('input[type="checkbox"]');
+    let addonsSelected = [];
+    checkboxes.forEach(cb=>{
+      if(cb.checked){
+        addonsSelected.push(cb.value);
+        totalPrice += parseFloat(cb.getAttribute('data-price'));
+      }
+    });
+    addonName = addonsSelected.join(", ");
+  }
+
+  cart.push({name:item.name, price:totalPrice, qty:1, addon:addonName});
+  updateCart();
+}
+
+function removeFromCart(index){
+  cart.splice(index,1);
+  updateCart();
+}
+
+function updateCart(){
+  cartList.innerHTML="";
+  let total=0;
+  cart.forEach((c,i)=>{
+    total += c.price * c.qty;
+    let displayName = c.name;
+    if(c.addon) displayName += ` (+${c.addon})`;
+    const li = document.createElement('li');
+    li.innerHTML = `${displayName} x ${c.qty} - RM${(c.price*c.qty).toFixed(2)} <button onclick="removeFromCart(${i})">Remove</button>`;
+    cartList.appendChild(li);
+  });
+  totalDiv.innerText = `Total: RM${total.toFixed(2)}`;
+}
+
+function order(){
+  if(cart.length===0){ alert("Cart is empty!"); return; }
+  alert("Order placed!\nThank you for ordering at Jom Singgah Burger Stall!");
+  cart=[];
+  updateCart();
+}
+</script>
+
+</body>
+</html>
