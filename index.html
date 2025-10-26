@@ -1,196 +1,233 @@
 <!DOCTYPE html>
 <html lang="ms">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Jom Singgah Burger Stall</title>
-  <style>
-    body {
-      font-family: Arial, sans-serif;
-      background-color: #fff8e7;
-      margin: 0;
-      padding: 0;
-      text-align: center;
-    }
-    header {
-      background-color: #ffbb33;
-      color: white;
-      padding: 20px;
-      font-size: 26px;
-      font-weight: bold;
-    }
-    .menu-section {
-      background-color: white;
-      border-radius: 15px;
-      margin: 20px auto;
-      padding: 20px;
-      width: 90%;
-      max-width: 800px;
-      box-shadow: 0 4px 10px rgba(0,0,0,0.1);
-    }
-    h2 {
-      color: #ff8800;
-      margin-bottom: 10px;
-    }
-    .item {
-      border-bottom: 1px solid #ddd;
-      padding: 10px;
-    }
-    select {
-      padding: 5px;
-      margin-top: 5px;
-    }
-    button {
-      background-color: #ff8800;
-      color: white;
-      border: none;
-      padding: 8px 15px;
-      margin-top: 8px;
-      border-radius: 10px;
-      cursor: pointer;
-    }
-    button:hover {
-      background-color: #ff5500;
-    }
-    footer {
-      margin: 30px;
-      color: gray;
-    }
-  </style>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Jom Singgah Burger Stall</title>
+<style>
+/* Reset & Font */
+* {margin:0; padding:0; box-sizing:border-box; font-family:'Poppins', sans-serif;}
+body {background:#fff7e6; color:#333;}
+
+/* Header */
+header {
+  background: linear-gradient(90deg, #ff6f3c, #ffcc00);
+  color:white; padding:25px; text-align:center;
+  font-size:32px; font-weight:700; letter-spacing:1px;
+  box-shadow:0 4px 8px rgba(0,0,0,0.2);
+}
+
+/* Tabs */
+.tabs {
+  display:flex; justify-content:center; gap:15px; margin:20px 0;
+}
+.tab-btn {
+  padding:10px 25px; border:none; border-radius:30px;
+  cursor:pointer; background:#ff9c3c; color:white; font-weight:600;
+  transition:0.3s;
+}
+.tab-btn.active, .tab-btn:hover { background:#ff6600; }
+
+/* Container */
+.container { display:flex; flex-wrap:wrap; gap:20px; padding:0 20px; }
+.menu { flex:2; display:grid; grid-template-columns:repeat(auto-fit,minmax(200px,1fr)); gap:20px; }
+.cart { flex:1; background:#fff3e0; padding:20px; border-radius:20px;
+       box-shadow:0 6px 12px rgba(0,0,0,0.15); min-width:280px; height:max-content; }
+.cart h2 { text-align:center; margin-bottom:15px; color:#ff6600; }
+
+/* Cards */
+.card {
+  background:white; padding:20px; border-radius:20px;
+  box-shadow:0 4px 12px rgba(0,0,0,0.1); text-align:center;
+  transition:0.3s;
+}
+.card:hover { transform:translateY(-5px); box-shadow:0 8px 20px rgba(0,0,0,0.15); }
+.card h3 { margin:10px 0; color:#ff6600; font-weight:600; }
+.card p { font-weight:700; color:#ff9c3c; margin-bottom:10px; }
+.card select, .card label { display:block; margin:5px 0; cursor:pointer; }
+.card input[type="checkbox"] { margin-right:5px; cursor:pointer; }
+.card button {
+  margin-top:10px; padding:8px 15px; border:none; border-radius:15px;
+  background:#ff6600; color:white; font-weight:600; cursor:pointer; transition:0.3s;
+}
+.card button:hover { background:#ff3300; }
+
+/* Cart List */
+.cart ul { list-style:none; max-height:300px; overflow-y:auto; padding:0; margin-bottom:10px; }
+.cart li {
+  display:flex; justify-content:space-between; padding:8px 10px;
+  margin-bottom:8px; background:#fff1e6; border-radius:10px; font-size:15px;
+}
+.cart li button { padding:2px 6px; font-size:13px; background:#ff6600; border:none; border-radius:5px; color:white; cursor:pointer; transition:0.3s; }
+.cart li button:hover { background:#ff3300; }
+
+#total { font-weight:700; font-size:18px; text-align:right; margin-top:10px; color:#ff6600; }
+.order-btn {
+  width:100%; padding:12px; background:#28a745; color:white; font-weight:600;
+  border:none; border-radius:15px; cursor:pointer; font-size:16px; transition:0.3s;
+}
+.order-btn:hover { background:#1fa63a; }
+
+/* History */
+#historyList { background:#fff3e0; padding:15px; border-radius:15px;
+              max-height:400px; overflow-y:auto; box-shadow:0 4px 12px rgba(0,0,0,0.1);}
+#historyList li { padding:8px; border-bottom:1px solid #ffe0b3; font-size:14px; }
+.clear-history-btn { margin-top:10px; padding:8px 15px; border:none; border-radius:15px;
+                     background:#ff3300; color:white; cursor:pointer; transition:0.3s; }
+.clear-history-btn:hover { background:#cc0000; }
+
+.hidden { display:none; }
+</style>
 </head>
-<body onload="playSound()">
+<body>
 
-  <audio id="introSound" src="https://www.soundjay.com/buttons/sounds/button-3.mp3"></audio>
+<header>Jom Singgah Burger Stall</header>
 
-  <header>🍔 Jom Singgah Burger Stall 🍹</header>
+<div class="tabs">
+  <button class="tab-btn active" onclick="showTab('menuTab')">Menu</button>
+  <button class="tab-btn" onclick="showTab('historyTab')">Order History</button>
+</div>
 
-  <div class="menu-section" id="burgerMenu">
-    <h2>Burger</h2>
-    <div class="item">Burger Ayam - RM3.50<br>
-      Add-on: 
-      <select id="burgerAyamAddon">
-        <option value="0">Tiada</option>
-        <option value="1">Cheese (+RM1)</option>
-      </select><br>
-      <button onclick="addToHistory('Burger Ayam', 3.5, 'burgerAyamAddon')">Order</button>
-    </div>
-
-    <div class="item">Burger Daging - RM3.50<br>
-      Add-on: 
-      <select id="burgerDagingAddon">
-        <option value="0">Tiada</option>
-        <option value="1">Cheese (+RM1)</option>
-      </select><br>
-      <button onclick="addToHistory('Burger Daging', 3.5, 'burgerDagingAddon')">Order</button>
-    </div>
-
-    <div class="item">Burger Ayam Special - RM4.50<br>
-      Add-on: 
-      <select id="burgerAyamSpAddon">
-        <option value="0">Tiada</option>
-        <option value="1">Cheese (+RM1)</option>
-      </select><br>
-      <button onclick="addToHistory('Burger Ayam Special', 4.5, 'burgerAyamSpAddon')">Order</button>
-    </div>
-
-    <div class="item">Burger Daging Special - RM4.50<br>
-      Add-on: 
-      <select id="burgerDagingSpAddon">
-        <option value="0">Tiada</option>
-        <option value="1">Cheese (+RM1)</option>
-      </select><br>
-      <button onclick="addToHistory('Burger Daging Special', 4.5, 'burgerDagingSpAddon')">Order</button>
-    </div>
-
-    <div class="item">Burger Ayam Double - RM4.50<br>
-      Add-on: 
-      <select id="burgerAyamDoubleAddon">
-        <option value="0">Tiada</option>
-        <option value="1">Cheese (+RM1)</option>
-      </select><br>
-      <button onclick="addToHistory('Burger Ayam Double', 4.5, 'burgerAyamDoubleAddon')">Order</button>
-    </div>
-
-    <div class="item">Burger Daging Double - RM4.50<br>
-      Add-on: 
-      <select id="burgerDagingDoubleAddon">
-        <option value="0">Tiada</option>
-        <option value="1">Cheese (+RM1)</option>
-      </select><br>
-      <button onclick="addToHistory('Burger Daging Double', 4.5, 'burgerDagingDoubleAddon')">Order</button>
-    </div>
-
-    <div class="item">Burger Ayam Double Special - RM5.50<br>
-      Add-on: 
-      <select id="burgerAyamDoubleSpAddon">
-        <option value="0">Tiada</option>
-        <option value="1">Cheese (+RM1)</option>
-      </select><br>
-      <button onclick="addToHistory('Burger Ayam Double Special', 5.5, 'burgerAyamDoubleSpAddon')">Order</button>
-    </div>
-
-    <div class="item">Burger Daging Double Special - RM5.50<br>
-      Add-on: 
-      <select id="burgerDagingDoubleSpAddon">
-        <option value="0">Tiada</option>
-        <option value="1">Cheese (+RM1)</option>
-      </select><br>
-      <button onclick="addToHistory('Burger Daging Double Special', 5.5, 'burgerDagingDoubleSpAddon')">Order</button>
+<!-- MENU -->
+<div id="menuTab" class="tab-content">
+  <div class="container">
+    <div class="menu" id="menu"></div>
+    <div class="cart">
+      <h2>Cart</h2>
+      <ul id="cartList"></ul>
+      <div id="total">Total: RM0.00</div>
+      <button class="order-btn" onclick="order()">Order Now</button>
     </div>
   </div>
+</div>
 
-  <div class="menu-section" id="rotiJohn">
-    <h2>Roti John</h2>
-    <div class="item">Roti John Ayam - RM7<br>
-      Add-on: 
-      <select id="rotiJohnAyamAddon">
-        <option value="0">Tiada</option>
-        <option value="1">Cheese (+RM1)</option>
-      </select><br>
-      <button onclick="addToHistory('Roti John Ayam', 7, 'rotiJohnAyamAddon')">Order</button>
-    </div>
-
-    <div class="item">Roti John Daging - RM7<br>
-      Add-on: 
-      <select id="rotiJohnDagingAddon">
-        <option value="0">Tiada</option>
-        <option value="1">Cheese (+RM1)</option>
-      </select><br>
-      <button onclick="addToHistory('Roti John Daging', 7, 'rotiJohnDagingAddon')">Order</button>
-    </div>
+<!-- HISTORY -->
+<div id="historyTab" class="tab-content hidden">
+  <div class="container" style="width:100%;">
+    <h2>Order History</h2>
+    <ul id="historyList"></ul>
+    <button class="clear-history-btn" onclick="clearHistory()">Clear History</button>
   </div>
+</div>
 
-  <div class="menu-section" id="air">
-    <h2>Minuman</h2>
-    <div class="item">Chocolate / Mocha Classic - RM6<br><button onclick="addToHistory('Chocolate/Mocha Classic', 6)">Order</button></div>
-    <div class="item">Chocolate / Mocha Premium - RM7<br><button onclick="addToHistory('Chocolate/Mocha Premium', 7)">Order</button></div>
-    <div class="item">Chocolate / Mocha Caramel - RM7<br><button onclick="addToHistory('Chocolate/Mocha Caramel', 7)">Order</button></div>
-    <div class="item">Chocolate / Mocha Strawberry - RM7<br><button onclick="addToHistory('Chocolate/Mocha Strawberry', 7)">Order</button></div>
-    <div class="item">Chocolate Caramel / Mocha Caramel Special - RM9<br><button onclick="addToHistory('Chocolate/Mocha Caramel Special', 9)">Order</button></div>
-    <div class="item">Chocolate Strawberry / Mocha Strawberry Special - RM9<br><button onclick="addToHistory('Chocolate/Mocha Strawberry Special', 9)">Order</button></div>
-    <div class="item">Chocolate / Mocha Special - RM9<br><button onclick="addToHistory('Chocolate/Mocha Special', 9)">Order</button></div>
-  </div>
+<audio id="clickSound">
+  <source src="https://www.soundjay.com/button/beep-07.wav" type="audio/wav">
+</audio>
 
-  <button onclick="window.location.href='history.html'">Lihat Sejarah Pesanan</button>
+<script>
+// === Data Menu ===
+const foodItems = [
+  {id:1,name:"Benjo",price:3.00,type:"burger"},
+  {id:2,name:"Burger Ayam",price:4.00,type:"burger"},
+  {id:3,name:"Burger Daging",price:4.00,type:"burger"},
+  {id:4,name:"Burger Ayam Special",price:5.00,type:"burger"},
+  {id:5,name:"Burger Daging Special",price:5.00,type:"burger"},
+  {id:6,name:"Burger Cheese",price:5.00,type:"burger"},
+  {id:7,name:"Burger Ayam Double",price:6.00,type:"burger"},
+  {id:8,name:"Burger Daging Double",price:6.00,type:"burger"},
+  {id:9,name:"Burger Ayam Double Special",price:7.00,type:"burger"},
+  {id:10,name:"Burger Daging Double Special",price:7.00,type:"burger"},
+  {id:11,name:"Oblong Ayam",price:7.00,type:"oblong"},
+  {id:12,name:"Oblong Daging",price:7.00,type:"oblong"},
+  {id:13,name:"Oblong Ayam Special",price:8.00,type:"oblong"},
+  {id:14,name:"Oblong Daging Special",price:8.00,type:"oblong"},
+  {id:15,name:"Oblong Cheese",price:8.00,type:"oblong"},
+  {id:16,name:"Oblong Ayam Double",price:11.00,type:"oblong"},
+  {id:17,name:"Oblong Daging Double",price:11.00,type:"oblong"},
+  {id:18,name:"Roti John Ayam",price:7.50,type:"rotiJohn"},
+  {id:19,name:"Roti John Daging",price:7.50,type:"rotiJohn"},
+  {id:20,name:"Roti John Cheese Ayam",price:9.00,type:"rotiJohn"},
+  {id:21,name:"Roti John Cheese Daging",price:9.00,type:"rotiJohn"},
+  {id:22,name:"Chocolate Special / Mocha Special",price:9.00,type:"air"},
+  {id:23,name:"Chocolate Strawberry Special / Mocha Strawberry Special",price:9.00,type:"air"},
+  {id:24,name:"Chocolate Caramel Special / Mocha Caramel Special",price:9.00,type:"air"},
+  {id:25,name:"Chocolate Strawberry / Mocha Strawberry",price:7.00,type:"air"},
+  {id:26,name:"Chocolate Caramel / Mocha Caramel",price:7.00,type:"air"},
+  {id:27,name:"Chocolate Premium / Mocha Premium",price:7.00,type:"air"},
+  {id:28,name:"Chocolate Classic / Mocha Classic",price:6.00,type:"air"}
+];
 
-  <footer>© 2025 Jom Singgah Burger Stall</footer>
+const addOnsBurger=[{name:"Cheese",price:1.00}];
+const addOnsOblong=[{name:"Telur",price:1.00},{name:"Daging",price:4.00},{name:"Cheese",price:1.00}];
+const addOnsRotiJohn=[{name:"Cheese",price:1.50}];
 
-  <script>
-    function playSound() {
-      document.getElementById('introSound').play();
-    }
+// === DOM ===
+const menuDiv=document.getElementById("menu");
+const cartList=document.getElementById("cartList");
+const totalDiv=document.getElementById("total");
+const clickSound=document.getElementById("clickSound");
+let cart=[];
+let historyOrders=JSON.parse(localStorage.getItem('historyOrders')||'[]');
 
-    function addToHistory(item, price, addonId) {
-      let addonPrice = 0;
-      if (addonId) {
-        addonPrice = parseFloat(document.getElementById(addonId).value);
-      }
-      let total = price + addonPrice;
-      let orders = JSON.parse(localStorage.getItem('orderHistory')) || [];
-      orders.push({item: item, price: total});
-      localStorage.setItem('orderHistory', JSON.stringify(orders));
-      alert(item + " berjaya dipesan! Jumlah: RM" + total.toFixed(2));
-    }
-  </script>
+// Create Menu Cards
+foodItems.forEach(item=>{
+  const card=document.createElement('div'); card.className='card';
+  let addonHtml='';
+  if(item.type==='burger') addonHtml=createCheckbox(addOnsBurger);
+  else if(item.type==='oblong') addonHtml=createCheckbox(addOnsOblong);
+  else if(item.type==='rotiJohn') addonHtml=createCheckbox(addOnsRotiJohn);
+  card.innerHTML=`<h3>${item.name}</h3><p>RM${item.price.toFixed(2)}</p>${addonHtml}<button onclick="addToCart(${item.id}, this)">Add to Cart</button>`;
+  menuDiv.appendChild(card);
+});
+
+// Functions
+function createCheckbox(list){
+  return list.map(a=>`<label><input type="checkbox" value="${a.name}" data-price="${a.price}">${a.name} +RM${a.price.toFixed(2)}</label>`).join('');
+}
+
+function addToCart(id,btn){
+  clickSound.currentTime=0; clickSound.play();
+  const item=foodItems.find(f=>f.id===id);
+  let totalPrice=item.price; let addons=[];
+  btn.parentElement.querySelectorAll('input[type="checkbox"]').forEach(cb=>{
+    if(cb.checked){ addons.push(cb.value); totalPrice+=parseFloat(cb.dataset.price); }
+  });
+  cart.push({name:item.name, price:totalPrice, addon:addons.join(", ")});
+  updateCart();
+}
+
+function removeFromCart(i){ cart.splice(i,1); updateCart(); }
+
+function updateCart(){
+  cartList.innerHTML=""; let total=0;
+  cart.forEach((c,i)=>{
+    total+=c.price;
+    let displayName=c.name; if(c.addon) displayName+=` (+${c.addon})`;
+    const li=document.createElement('li');
+    li.innerHTML=`${displayName} - RM${c.price.toFixed(2)} <button onclick="removeFromCart(${i})">X</button>`;
+    cartList.appendChild(li);
+  });
+  totalDiv.innerText=`Total: RM${total.toFixed(2)}`;
+}
+
+function order(){
+  if(cart.length===0){ alert("Cart is empty!"); return; }
+  let now=new Date();
+  let text=`[${now.toLocaleString()}] `;
+  text+=cart.map(c=>{let n=c.name;if(c.addon)n+=` (+${c.addon})`; return `${n} - RM${c.price.toFixed(2)}`}).join("; ");
+  historyOrders.push(text);
+  localStorage.setItem('historyOrders',JSON.stringify(historyOrders));
+  alert("Order placed! Terima kasih singgah!");
+  cart=[]; updateCart(); updateHistory();
+}
+
+function updateHistory(){
+  const list=document.getElementById('historyList');
+  list.innerHTML="";
+  historyOrders.forEach(o=>{ const li=document.createElement('li'); li.textContent=o; list.appendChild(li); });
+}
+
+function clearHistory(){ if(confirm("Padam semua sejarah?")){ historyOrders=[]; localStorage.removeItem('historyOrders'); updateHistory(); } }
+
+function showTab(id){
+  document.querySelectorAll('.tab-content').forEach(el=>el.classList.add('hidden'));
+  document.getElementById(id).classList.remove('hidden');
+  document.querySelectorAll('.tab-btn').forEach(b=>b.classList.remove('active'));
+  event.currentTarget.classList.add('active');
+}
+
+updateHistory();
+</script>
+
 </body>
 </html>
