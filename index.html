@@ -1,233 +1,413 @@
 <!DOCTYPE html>
-<html lang="ms">
+<html lang="en">
 <head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width,initial-scale=1" />
 <title>Jom Singgah Burger Stall</title>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&display=swap" rel="stylesheet">
 <style>
-/* Reset & Font */
-* {margin:0; padding:0; box-sizing:border-box; font-family:'Poppins', sans-serif;}
-body {background:#fff7e6; color:#333;}
+  :root{
+    --orange:#ff8a00;
+    --orange-deep:#ff6a00;
+    --soft-yellow:#fff7e6;
+    --card:#ffffff;
+    --muted:#6b6b6b;
+  }
+  *{box-sizing:border-box}
+  body{
+    margin:0;
+    font-family:Inter,system-ui,Segoe UI,Roboto,Arial,sans-serif;
+    background:linear-gradient(180deg,var(--soft-yellow),#ffdca8);
+    color:#222;
+  }
+  header{
+    background:linear-gradient(90deg,var(--orange),var(--orange-deep));
+    color:white;
+    padding:18px 16px;
+    text-align:center;
+    font-size:22px;
+    font-weight:700;
+    letter-spacing:0.4px;
+  }
 
-/* Header */
-header {
-  background: linear-gradient(90deg, #ff6f3c, #ffcc00);
-  color:white; padding:25px; text-align:center;
-  font-size:32px; font-weight:700; letter-spacing:1px;
-  box-shadow:0 4px 8px rgba(0,0,0,0.2);
-}
+  /* tabs */
+  .tabs{
+    display:flex;
+    gap:8px;
+    justify-content:center;
+    padding:12px;
+    background:transparent;
+    flex-wrap:wrap;
+  }
+  .tab-btn{
+    background:var(--orange);
+    border:none;
+    color:white;
+    padding:8px 14px;
+    border-radius:12px;
+    cursor:pointer;
+    font-weight:600;
+    box-shadow:0 6px 12px rgba(0,0,0,0.08);
+  }
+  .tab-btn.active{ background:var(--orange-deep); transform:translateY(-2px);}
 
-/* Tabs */
-.tabs {
-  display:flex; justify-content:center; gap:15px; margin:20px 0;
-}
-.tab-btn {
-  padding:10px 25px; border:none; border-radius:30px;
-  cursor:pointer; background:#ff9c3c; color:white; font-weight:600;
-  transition:0.3s;
-}
-.tab-btn.active, .tab-btn:hover { background:#ff6600; }
+  /* layout */
+  .wrap{
+    display:flex;
+    gap:20px;
+    padding:18px;
+    align-items:flex-start;
+    justify-content:center;
+    flex-wrap:wrap;
+  }
+  .menu-grid{
+    display:grid;
+    gap:16px;
+    grid-template-columns:repeat(auto-fill,minmax(220px,1fr));
+    width:920px;
+    max-width:calc(100% - 320px);
+  }
 
-/* Container */
-.container { display:flex; flex-wrap:wrap; gap:20px; padding:0 20px; }
-.menu { flex:2; display:grid; grid-template-columns:repeat(auto-fit,minmax(200px,1fr)); gap:20px; }
-.cart { flex:1; background:#fff3e0; padding:20px; border-radius:20px;
-       box-shadow:0 6px 12px rgba(0,0,0,0.15); min-width:280px; height:max-content; }
-.cart h2 { text-align:center; margin-bottom:15px; color:#ff6600; }
+  .card{
+    background:var(--card);
+    border-radius:12px;
+    padding:14px;
+    box-shadow:0 8px 18px rgba(0,0,0,0.08);
+    transition:transform .16s ease,box-shadow .16s ease;
+  }
+  .card:hover{ transform:translateY(-6px); box-shadow:0 12px 30px rgba(0,0,0,0.12); }
+  .card h3{ margin:0 0 6px; color:var(--orange-deep); font-size:16px;}
+  .card p.price{ margin:0 0 8px; font-weight:700; color:var(--orange-deep); }
+  .addons{ margin-top:8px; font-size:14px; color:var(--muted); }
+  .addons label{ display:block; margin:6px 0; cursor:pointer; }
+  .card button{ margin-top:10px; width:100%; padding:8px; border-radius:10px; border:none; background:var(--orange); color:white; font-weight:700; cursor:pointer; }
 
-/* Cards */
-.card {
-  background:white; padding:20px; border-radius:20px;
-  box-shadow:0 4px 12px rgba(0,0,0,0.1); text-align:center;
-  transition:0.3s;
-}
-.card:hover { transform:translateY(-5px); box-shadow:0 8px 20px rgba(0,0,0,0.15); }
-.card h3 { margin:10px 0; color:#ff6600; font-weight:600; }
-.card p { font-weight:700; color:#ff9c3c; margin-bottom:10px; }
-.card select, .card label { display:block; margin:5px 0; cursor:pointer; }
-.card input[type="checkbox"] { margin-right:5px; cursor:pointer; }
-.card button {
-  margin-top:10px; padding:8px 15px; border:none; border-radius:15px;
-  background:#ff6600; color:white; font-weight:600; cursor:pointer; transition:0.3s;
-}
-.card button:hover { background:#ff3300; }
+  /* cart */
+  .cart{
+    width:300px;
+    min-width:260px;
+    max-height:75vh;
+    overflow:auto;
+    background:var(--card);
+    border-radius:12px;
+    padding:14px;
+    box-shadow:0 8px 18px rgba(0,0,0,0.08);
+  }
+  .cart h2{ margin:0 0 8px; color:var(--orange-deep); text-align:center; }
+  .cart ul{ list-style:none; padding:0; margin:0; }
+  .cart li{ display:flex; justify-content:space-between; align-items:center; gap:8px; background:#fff7ee; padding:8px; border-radius:8px; margin-bottom:8px; font-size:14px; }
+  .cart li .left{ max-width:160px; overflow:hidden; text-overflow:ellipsis; white-space:nowrap; }
+  .qty-controls{ display:inline-flex; gap:6px; align-items:center; }
+  .qty-controls button{ padding:4px 8px; border-radius:6px; border:none; background:#ffd89b; cursor:pointer; }
+  .total-row{ text-align:right; margin-top:10px; font-weight:700; font-size:16px; }
+  .order-btn{ margin-top:10px; width:100%; padding:10px; border-radius:10px; border:none; background:#28a745; color:white; font-weight:700; cursor:pointer; }
 
-/* Cart List */
-.cart ul { list-style:none; max-height:300px; overflow-y:auto; padding:0; margin-bottom:10px; }
-.cart li {
-  display:flex; justify-content:space-between; padding:8px 10px;
-  margin-bottom:8px; background:#fff1e6; border-radius:10px; font-size:15px;
-}
-.cart li button { padding:2px 6px; font-size:13px; background:#ff6600; border:none; border-radius:5px; color:white; cursor:pointer; transition:0.3s; }
-.cart li button:hover { background:#ff3300; }
+  /* history view */
+  #historyView{ width:calc(100% - 40px); max-width:980px; margin:16px auto; display:none; }
+  #historyView .history-card{ background:var(--card); padding:12px; border-radius:10px; margin-bottom:8px; box-shadow:0 6px 14px rgba(0,0,0,0.06);}
 
-#total { font-weight:700; font-size:18px; text-align:right; margin-top:10px; color:#ff6600; }
-.order-btn {
-  width:100%; padding:12px; background:#28a745; color:white; font-weight:600;
-  border:none; border-radius:15px; cursor:pointer; font-size:16px; transition:0.3s;
-}
-.order-btn:hover { background:#1fa63a; }
+  /* music control */
+  .music-toggle{ position:fixed; right:14px; bottom:18px; background:var(--orange-deep); color:white; border:none; padding:10px 12px; border-radius:24px; cursor:pointer; box-shadow:0 8px 20px rgba(0,0,0,0.12);}
 
-/* History */
-#historyList { background:#fff3e0; padding:15px; border-radius:15px;
-              max-height:400px; overflow-y:auto; box-shadow:0 4px 12px rgba(0,0,0,0.1);}
-#historyList li { padding:8px; border-bottom:1px solid #ffe0b3; font-size:14px; }
-.clear-history-btn { margin-top:10px; padding:8px 15px; border:none; border-radius:15px;
-                     background:#ff3300; color:white; cursor:pointer; transition:0.3s; }
-.clear-history-btn:hover { background:#cc0000; }
-
-.hidden { display:none; }
+  @media (max-width:1000px){
+    .menu-grid{ max-width:100%; width:100%; }
+    .wrap{ padding:12px; gap:12px; }
+    .cart{ width:100%; max-width:480px; }
+  }
 </style>
 </head>
 <body>
 
 <header>Jom Singgah Burger Stall</header>
 
-<div class="tabs">
-  <button class="tab-btn active" onclick="showTab('menuTab')">Menu</button>
-  <button class="tab-btn" onclick="showTab('historyTab')">Order History</button>
+<!-- Tabs -->
+<div class="tabs" role="tablist" aria-label="Menu tabs">
+  <button class="tab-btn active" data-tab="burger">Burger</button>
+  <button class="tab-btn" data-tab="oblong">Oblong</button>
+  <button class="tab-btn" data-tab="roti">Roti John</button>
+  <button class="tab-btn" data-tab="drinks">Air / Drinks</button>
+  <button class="tab-btn" data-tab="history">Order History</button>
 </div>
 
-<!-- MENU -->
-<div id="menuTab" class="tab-content">
-  <div class="container">
-    <div class="menu" id="menu"></div>
-    <div class="cart">
-      <h2>Cart</h2>
-      <ul id="cartList"></ul>
-      <div id="total">Total: RM0.00</div>
-      <button class="order-btn" onclick="order()">Order Now</button>
-    </div>
+<!-- Main area -->
+<div class="wrap">
+  <div class="menu-grid" id="menuGrid">
+    <!-- cards injected here -->
+  </div>
+
+  <aside class="cart" aria-label="Cart">
+    <h2>🛒 Cart</h2>
+    <ul id="cartList"></ul>
+    <div class="total-row">Total: RM <span id="cartTotal">0.00</span></div>
+    <button class="order-btn" id="placeOrderBtn">Place Order</button>
+  </aside>
+</div>
+
+<!-- history -->
+<div id="historyView">
+  <h2 style="color:var(--orange-deep); text-align:center;">📜 Order History</h2>
+  <div id="historyList"></div>
+  <div style="text-align:center; margin-top:10px;">
+    <button id="clearHistoryBtn" style="background:#ff6b6b;color:white;padding:8px 12px;border:none;border-radius:8px;cursor:pointer;">Clear History</button>
   </div>
 </div>
 
-<!-- HISTORY -->
-<div id="historyTab" class="tab-content hidden">
-  <div class="container" style="width:100%;">
-    <h2>Order History</h2>
-    <ul id="historyList"></ul>
-    <button class="clear-history-btn" onclick="clearHistory()">Clear History</button>
-  </div>
-</div>
+<button class="music-toggle" id="musicToggle">🔊 Music</button>
 
-<audio id="clickSound">
-  <source src="https://www.soundjay.com/button/beep-07.wav" type="audio/wav">
+<audio id="bgAudio" loop>
+  <!-- instrumental retro chill; if browser blocks autoplay user can unmute with button -->
+  <source src="https://files.catbox.moe/6hz8b8.mp3" type="audio/mpeg">
 </audio>
 
 <script>
-// === Data Menu ===
-const foodItems = [
-  {id:1,name:"Benjo",price:3.00,type:"burger"},
-  {id:2,name:"Burger Ayam",price:4.00,type:"burger"},
-  {id:3,name:"Burger Daging",price:4.00,type:"burger"},
-  {id:4,name:"Burger Ayam Special",price:5.00,type:"burger"},
-  {id:5,name:"Burger Daging Special",price:5.00,type:"burger"},
-  {id:6,name:"Burger Cheese",price:5.00,type:"burger"},
-  {id:7,name:"Burger Ayam Double",price:6.00,type:"burger"},
-  {id:8,name:"Burger Daging Double",price:6.00,type:"burger"},
-  {id:9,name:"Burger Ayam Double Special",price:7.00,type:"burger"},
-  {id:10,name:"Burger Daging Double Special",price:7.00,type:"burger"},
-  {id:11,name:"Oblong Ayam",price:7.00,type:"oblong"},
-  {id:12,name:"Oblong Daging",price:7.00,type:"oblong"},
-  {id:13,name:"Oblong Ayam Special",price:8.00,type:"oblong"},
-  {id:14,name:"Oblong Daging Special",price:8.00,type:"oblong"},
-  {id:15,name:"Oblong Cheese",price:8.00,type:"oblong"},
-  {id:16,name:"Oblong Ayam Double",price:11.00,type:"oblong"},
-  {id:17,name:"Oblong Daging Double",price:11.00,type:"oblong"},
-  {id:18,name:"Roti John Ayam",price:7.50,type:"rotiJohn"},
-  {id:19,name:"Roti John Daging",price:7.50,type:"rotiJohn"},
-  {id:20,name:"Roti John Cheese Ayam",price:9.00,type:"rotiJohn"},
-  {id:21,name:"Roti John Cheese Daging",price:9.00,type:"rotiJohn"},
-  {id:22,name:"Chocolate Special / Mocha Special",price:9.00,type:"air"},
-  {id:23,name:"Chocolate Strawberry Special / Mocha Strawberry Special",price:9.00,type:"air"},
-  {id:24,name:"Chocolate Caramel Special / Mocha Caramel Special",price:9.00,type:"air"},
-  {id:25,name:"Chocolate Strawberry / Mocha Strawberry",price:7.00,type:"air"},
-  {id:26,name:"Chocolate Caramel / Mocha Caramel",price:7.00,type:"air"},
-  {id:27,name:"Chocolate Premium / Mocha Premium",price:7.00,type:"air"},
-  {id:28,name:"Chocolate Classic / Mocha Classic",price:6.00,type:"air"}
-];
+/* ====== Configuration per request ======
+   - Burger add-ons: Cheese RM1, Daging RM2
+   - Oblong add-ons: Cheese RM1, Daging RM4
+   - Roti John add-ons: Cheese RM1.5, Daging RM2
+   - Drinks: as listed
+*/
+const MENU = {
+  burger: [
+    { id: "b1", name: "Benjo", price: 3.00, addons: ["Cheese"]},
+    { id: "b2", name: "Burger Ayam", price: 4.00, addons: ["Cheese","Daging"]},
+    { id: "b3", name: "Burger Daging", price: 4.00, addons: ["Cheese","Daging"]},
+    { id: "b4", name: "Burger Ayam Special", price: 5.00, addons: ["Cheese","Daging"]},
+    { id: "b5", name: "Burger Daging Special", price: 5.00, addons: ["Cheese","Daging"]},
+    { id: "b6", name: "Burger Ayam Double", price: 6.00, addons: ["Cheese","Daging"]},
+    { id: "b7", name: "Burger Daging Double", price: 6.00, addons: ["Cheese","Daging"]},
+    { id: "b8", name: "Burger Ayam Double Special", price: 7.00, addons: ["Cheese","Daging"]},
+    { id: "b9", name: "Burger Daging Double Special", price: 7.00, addons: ["Cheese","Daging"]}
+  ],
+  oblong: [
+    { id: "o1", name: "Oblong Biasa (Ayam/Daging)", price: 7.00, addons: ["Cheese","Daging"]},
+    { id: "o2", name: "Oblong Special (Ayam/Daging)", price: 8.00, addons: ["Cheese","Daging"]},
+    { id: "o3", name: "Oblong Double/Kahwin (Ayam/Daging)", price: 11.00, addons: ["Cheese","Daging"]}
+  ],
+  roti: [
+    { id: "r1", name: "Roti John Biasa (Ayam/Daging)", price: 7.50, addons: ["Cheese","Daging"]},
+  ],
+  drinks: [
+    { id: "d1", name: "Chocolate Special", price: 9.00, addons: []},
+    { id: "d2", name: "Mocha Special", price: 9.00, addons: []},
+    { id: "d3", name: "Chocolate Strawberry Special", price: 9.00, addons: []},
+    { id: "d4", name: "Mocha Strawberry Special", price: 9.00, addons: []},
+    { id: "d5", name: "Chocolate Caramel Special", price: 9.00, addons: []},
+    { id: "d6", name: "Mocha Caramel Special", price: 9.00, addons: []},
+    { id: "d7", name: "Chocolate Strawberry", price: 7.00, addons: []},
+    { id: "d8", name: "Mocha Strawberry", price: 7.00, addons: []},
+    { id: "d9", name: "Chocolate Caramel", price: 7.00, addons: []},
+    { id: "d10", name: "Mocha Caramel", price: 7.00, addons: []},
+    { id: "d11", name: "Chocolate Premium", price: 7.00, addons: []},
+    { id: "d12", name: "Mocha Premium", price: 7.00, addons: []},
+    { id: "d13", name: "Chocolate Classic", price: 6.00, addons: []},
+    { id: "d14", name: "Mocha Classic", price: 6.00, addons: []}
+  ]
+};
 
-const addOnsBurger=[{name:"Cheese",price:1.00}];
-const addOnsOblong=[{name:"Telur",price:1.00},{name:"Daging",price:4.00},{name:"Cheese",price:1.00}];
-const addOnsRotiJohn=[{name:"Cheese",price:1.50}];
-
-// === DOM ===
-const menuDiv=document.getElementById("menu");
-const cartList=document.getElementById("cartList");
-const totalDiv=document.getElementById("total");
-const clickSound=document.getElementById("clickSound");
-let cart=[];
-let historyOrders=JSON.parse(localStorage.getItem('historyOrders')||'[]');
-
-// Create Menu Cards
-foodItems.forEach(item=>{
-  const card=document.createElement('div'); card.className='card';
-  let addonHtml='';
-  if(item.type==='burger') addonHtml=createCheckbox(addOnsBurger);
-  else if(item.type==='oblong') addonHtml=createCheckbox(addOnsOblong);
-  else if(item.type==='rotiJohn') addonHtml=createCheckbox(addOnsRotiJohn);
-  card.innerHTML=`<h3>${item.name}</h3><p>RM${item.price.toFixed(2)}</p>${addonHtml}<button onclick="addToCart(${item.id}, this)">Add to Cart</button>`;
-  menuDiv.appendChild(card);
-});
-
-// Functions
-function createCheckbox(list){
-  return list.map(a=>`<label><input type="checkbox" value="${a.name}" data-price="${a.price}">${a.name} +RM${a.price.toFixed(2)}</label>`).join('');
+/* addon price rules */
+function addonPriceFor(category, addonName){
+  // normalize name
+  const a = addonName.toString().toLowerCase();
+  if(category === 'burger'){
+    if(a.includes('daging')) return 2.00;
+    if(a.includes('cheese') || a.includes('cheez') || a.includes('che')) return 1.00;
+  }
+  if(category === 'oblong'){
+    if(a.includes('daging')) return 4.00;
+    if(a.includes('cheese')) return 1.00;
+  }
+  if(category === 'roti'){
+    if(a.includes('daging')) return 2.00;
+    if(a.includes('cheese')) return 1.50;
+  }
+  return 0;
 }
 
-function addToCart(id,btn){
-  clickSound.currentTime=0; clickSound.play();
-  const item=foodItems.find(f=>f.id===id);
-  let totalPrice=item.price; let addons=[];
-  btn.parentElement.querySelectorAll('input[type="checkbox"]').forEach(cb=>{
-    if(cb.checked){ addons.push(cb.value); totalPrice+=parseFloat(cb.dataset.price); }
+/* state */
+let currentTab = 'burger';
+let cart = []; // each item: {id, name, basePrice, addons: [{name,price}], qty}
+
+/* DOM refs */
+const menuGrid = document.getElementById('menuGrid');
+const cartList = document.getElementById('cartList');
+const cartTotalEl = document.getElementById('cartTotal');
+const historyView = document.getElementById('historyView');
+const historyList = document.getElementById('historyList');
+const placeOrderBtn = document.getElementById('placeOrderBtn');
+const clearHistoryBtn = document.getElementById('clearHistoryBtn');
+const bgAudio = document.getElementById('bgAudio');
+const musicToggle = document.getElementById('musicToggle');
+
+/* history storage */
+let ordersHistory = JSON.parse(localStorage.getItem('js_orders') || '[]');
+
+/* helpers */
+function formatRM(n){ return n.toFixed(2); }
+
+function renderMenu(tab){
+  menuGrid.innerHTML = '';
+  const items = MENU[tab] || [];
+  items.forEach(it=>{
+    const card = document.createElement('div');
+    card.className = 'card';
+    // addon HTML: checkbox list, price shown
+    let addonsHTML = '';
+    if(it.addons && it.addons.length){
+      addonsHTML += '<div class="addons">';
+      it.addons.forEach(addon=>{
+        const price = addonPriceFor(tab, addon);
+        addonsHTML += `<label><input type="checkbox" data-addon="${addon}" data-price="${price}"> ${addon} +RM${formatRM(price)}</label>`;
+      });
+      addonsHTML += '</div>';
+    }
+    card.innerHTML = `
+      <h3>${it.name}</h3>
+      <p class="price">RM ${formatRM(it.price)}</p>
+      ${addonsHTML}
+      <button data-id="${it.id}">Add to cart</button>
+    `;
+    // add handler
+    card.querySelector('button').addEventListener('click', (e)=>{
+      const btn = e.currentTarget;
+      const root = btn.closest('.card');
+      const checkboxes = root.querySelectorAll('input[type="checkbox"]:checked');
+      const addons = Array.from(checkboxes).map(cb=>{
+        return { name: cb.dataset.addon, price: parseFloat(cb.dataset.price) || 0 };
+      });
+      addToCart(it.id, it.name, it.price, addons, tab);
+      // uncheck after add
+      root.querySelectorAll('input[type="checkbox"]').forEach(cb=>cb.checked = false);
+    });
+    menuGrid.appendChild(card);
   });
-  cart.push({name:item.name, price:totalPrice, addon:addons.join(", ")});
-  updateCart();
 }
 
-function removeFromCart(i){ cart.splice(i,1); updateCart(); }
+/* merge logic: if same id and same addon set => increment qty */
+function addToCart(id, name, basePrice, addons, category){
+  // normalize addons key (sorted names)
+  const addonKey = addons.map(a=>a.name).sort().join('|');
+  const existing = cart.find(c => c.id === id && c.addonKey === addonKey);
+  const addonsCopy = addons.map(a=>({...a}));
+  if(existing){
+    existing.qty += 1;
+  } else {
+    cart.push({ id, name, basePrice, addons: addonsCopy, addonKey, qty: 1, category });
+  }
+  renderCart();
+}
 
-function updateCart(){
-  cartList.innerHTML=""; let total=0;
-  cart.forEach((c,i)=>{
-    total+=c.price;
-    let displayName=c.name; if(c.addon) displayName+=` (+${c.addon})`;
-    const li=document.createElement('li');
-    li.innerHTML=`${displayName} - RM${c.price.toFixed(2)} <button onclick="removeFromCart(${i})">X</button>`;
+function renderCart(){
+  cartList.innerHTML = '';
+  let total = 0;
+  cart.forEach((c, idx)=>{
+    const itemTotal = (c.basePrice + c.addons.reduce((s,a)=>s+a.price,0)) * c.qty;
+    total += itemTotal;
+    const li = document.createElement('li');
+    li.innerHTML = `
+      <div class="left">
+        <div style="font-weight:600">${c.name}</div>
+        <div style="font-size:13px; color:#666;">${c.addons.length? c.addons.map(a=>a.name+' +RM'+formatRM(a.price)).join(', '): ''}</div>
+      </div>
+      <div style="display:flex;flex-direction:column;align-items:flex-end; gap:6px;">
+        <div>
+          <span style="font-weight:700">RM ${formatRM(itemTotal)}</span>
+        </div>
+        <div class="qty-controls">
+          <button data-action="dec" data-idx="${idx}">-</button>
+          <span style="min-width:22px; display:inline-block; text-align:center">${c.qty}</span>
+          <button data-action="inc" data-idx="${idx}">+</button>
+          <button data-action="rm" data-idx="${idx}" style="margin-left:8px; background:#ff6b6b; border:none; padding:4px 6px; border-radius:6px; cursor:pointer;">Remove</button>
+        </div>
+      </div>
+    `;
     cartList.appendChild(li);
   });
-  totalDiv.innerText=`Total: RM${total.toFixed(2)}`;
+  cartTotalEl.textContent = formatRM(total);
+
+  // attach qty handlers
+  cartList.querySelectorAll('button[data-action]').forEach(btn=>{
+    btn.addEventListener('click', (e)=>{
+      const act = btn.dataset.action;
+      const idx = Number(btn.dataset.idx);
+      if(act === 'inc'){ cart[idx].qty += 1; }
+      else if(act === 'dec'){ cart[idx].qty = Math.max(1, cart[idx].qty - 1); }
+      else if(act === 'rm'){ cart.splice(idx,1); }
+      renderCart();
+    });
+  });
 }
 
-function order(){
-  if(cart.length===0){ alert("Cart is empty!"); return; }
-  let now=new Date();
-  let text=`[${now.toLocaleString()}] `;
-  text+=cart.map(c=>{let n=c.name;if(c.addon)n+=` (+${c.addon})`; return `${n} - RM${c.price.toFixed(2)}`}).join("; ");
-  historyOrders.push(text);
-  localStorage.setItem('historyOrders',JSON.stringify(historyOrders));
-  alert("Order placed! Terima kasih singgah!");
-  cart=[]; updateCart(); updateHistory();
+/* place order */
+placeOrderBtn.addEventListener('click', ()=>{
+  if(cart.length === 0){ alert('Cart kosong!'); return; }
+  const now = new Date();
+  const summary = cart.map(c=>{
+    const addonsText = c.addons.length ? ` (${c.addons.map(a=>a.name).join(', ')})` : '';
+    const line = `${c.name}${addonsText} x${c.qty} - RM ${formatRM((c.basePrice + c.addons.reduce((s,a)=>s+a.price,0)) * c.qty)}`;
+    return line;
+  }).join('; ');
+  const order = { time: now.toLocaleString(), summary, total: cart.reduce((s,c)=> s + ((c.basePrice + c.addons.reduce((a,b)=>a+b.price,0)) * c.qty),0) };
+  ordersHistory.push(order);
+  localStorage.setItem('js_orders', JSON.stringify(ordersHistory));
+  alert('Order placed! Thank you.');
+  cart = [];
+  renderCart();
+  renderHistory();
+});
+
+/* history */
+function renderHistory(){
+  // show history view only if tab selected
+  historyList.innerHTML = '';
+  if(ordersHistory.length === 0){
+    historyList.innerHTML = '<div class="history-card">No orders yet.</div>';
+    return;
+  }
+  ordersHistory.slice().reverse().forEach(o=>{
+    const div = document.createElement('div');
+    div.className = 'history-card';
+    div.innerHTML = `<div style="font-weight:700; color:var(--orange-deep)">${o.time}</div><div style="margin-top:6px">${o.summary}</div><div style="margin-top:8px;font-weight:700">Total: RM ${formatRM(o.total)}</div>`;
+    historyList.appendChild(div);
+  });
 }
+clearHistoryBtn.addEventListener('click', ()=>{
+  if(confirm('Clear all history?')){ ordersHistory = []; localStorage.removeItem('js_orders'); renderHistory(); }
+});
 
-function updateHistory(){
-  const list=document.getElementById('historyList');
-  list.innerHTML="";
-  historyOrders.forEach(o=>{ const li=document.createElement('li'); li.textContent=o; list.appendChild(li); });
-}
+/* tabs logic */
+document.querySelectorAll('.tab-btn').forEach(btn=>{
+  btn.addEventListener('click', (e)=>{
+    document.querySelectorAll('.tab-btn').forEach(b=>b.classList.remove('active'));
+    e.currentTarget.classList.add('active');
+    const tab = e.currentTarget.dataset.tab;
+    currentTab = tab;
+    // show/hide area
+    if(tab === 'history'){
+      document.querySelector('.wrap').style.display = 'none';
+      historyView.style.display = 'block';
+      renderHistory();
+    } else {
+      document.querySelector('.wrap').style.display = 'flex';
+      historyView.style.display = 'none';
+      renderMenu(tab);
+    }
+  });
+});
 
-function clearHistory(){ if(confirm("Padam semua sejarah?")){ historyOrders=[]; localStorage.removeItem('historyOrders'); updateHistory(); } }
+/* music toggle */
+musicToggle.addEventListener('click', ()=>{
+  if(bgAudio.paused){ bgAudio.play(); musicToggle.textContent = '🔊 Music'; }
+  else { bgAudio.pause(); musicToggle.textContent = '🔈 Muted'; }
+});
 
-function showTab(id){
-  document.querySelectorAll('.tab-content').forEach(el=>el.classList.add('hidden'));
-  document.getElementById(id).classList.remove('hidden');
-  document.querySelectorAll('.tab-btn').forEach(b=>b.classList.remove('active'));
-  event.currentTarget.classList.add('active');
-}
+/* initialize */
+renderMenu(currentTab);
+renderCart();
+renderHistory();
 
-updateHistory();
+/* try autoplay - browsers may block; user can press music button */
+bgAudio.volume = 0.38;
+bgAudio.play().catch(()=>{/* autoplay blocked; user can toggle */});
 </script>
-
 </body>
 </html>
